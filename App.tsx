@@ -204,7 +204,10 @@ function App() {
           <ItemEditor 
             items={items} 
             setItems={setItems} 
-            onNext={() => setAppState('assigning')}
+            onNext={() => {
+              setAppState('assigning');
+              window.scrollTo(0, 0);
+            }}
             imageUrls={imageUrls}
             onAppendReceipt={handleAppendReceipt}
             isAppending={isAppendingItems}
@@ -217,7 +220,10 @@ function App() {
             items={items} 
             people={people} 
             setPeople={setPeople} 
-            onBack={() => setAppState('editing')}
+            onBack={() => {
+              setAppState('editing');
+              window.scrollTo(0, 0);
+            }}
           />
         );
       case 'idle':
