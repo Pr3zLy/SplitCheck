@@ -1,20 +1,41 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# SplitCheck
 
-# Run and deploy your AI Studio app
+SplitCheck semplifica la divisione del conto. Carica una ricevuta e l'app estrarrà automaticamente gli articoli. Assegna gli articoli agli amici e ottieni la suddivisione finale in pochi secondi. Niente più calcoli manuali!
 
-This contains everything you need to run your app locally.
+Creato da **Matteo Abrugiato**.
 
-View your app in AI Studio: https://ai.studio/apps/drive/1B9ENEjWuc4ZMtDoTzQcdrBbiBdQ6mCtt
+## Funzionalità
 
-## Run Locally
+*   Carica l'immagine di una ricevuta.
+*   Estrae automaticamente articoli, quantità e prezzo utilizzando l'IA di Gemini.
+*   Assegna articoli a più persone.
+*   Calcola l'importo totale per ogni persona.
 
-**Prerequisites:**  Node.js
+## Tecnologie Utilizzate
 
+*   React
+*   TypeScript
+*   Vite
+*   Google Gemini AI
 
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+## Esecuzione in Locale
+
+**Prerequisiti:** Node.js
+
+1.  Clona il repository:
+    ```bash
+    git clone https://github.com/Pr3zLy/SplitCheck.git
+    ```
+2.  Installa le dipendenze:
+    ```bash
+    cd SplitCheck
+    npm install
+    ```
+3.  Imposta la tua chiave API Gemini in un file `.env.local` nella root del progetto. Crea il file se non esiste.
+    ```
+    API_KEY=tua_chiave_api_gemini
+    ```
+4.  Avvia l'app:
+    ```bash
+    npm run dev
+    ```
