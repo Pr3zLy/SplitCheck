@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { Person, ReceiptItem } from '../types';
-import { PlusIcon, TrashIcon, UserIcon, UsersIcon, ListIcon, FocusIcon, ArrowLeftIcon, ColosseumIcon } from './icons';
+import { PlusIcon, TrashIcon, UserIcon, UsersIcon, ListIcon, FocusIcon, ArrowLeftIcon, ColosseumIcon, RandomIcon } from './icons';
 import SummaryView from './SummaryView';
 
 interface PeopleAssignerProps {
@@ -13,6 +13,8 @@ interface PeopleAssignerProps {
 const PeopleAssigner: React.FC<PeopleAssignerProps> = ({ items, people, setPeople, onBack }) => {
     const [viewMode, setViewMode] = useState<'list' | 'focus'>('focus');
     const [focusIndex, setFocusIndex] = useState(0);
+    const [isAnimatingRandom, setIsAnimatingRandom] = useState(false);
+    const [highlightedPersonId, setHighlightedPersonId] = useState<string | null>(null);
     
     const handleAddPerson = () => {
         setPeople(prev => [
@@ -65,6 +67,64 @@ const PeopleAssigner: React.FC<PeopleAssignerProps> = ({ items, people, setPeopl
 
             return newPeople;
         });
+    };
+
+    const handleAssignRandomly = (itemId: string) => {
+        if (people.length === 0 || isAnimatingRandom) return;
+
+        setIsAnimatingRandom(true);
+        setHighlightedPersonId(null);
+
+        const animationDuration = 2000; // 2 seconds
+        const intervalTime = 100; // highlight a new person every 100ms
+        let animationInterval: number;
+
+        // Start cycling through people
+        animationInterval = window.setInterval(() => {
+            const randomIndex = Math.floor(Math.random() * people.length);
+            setHighlightedPersonId(people[randomIndex].id);
+        }, intervalTime);
+
+        // After animation duration, pick the winner and stop
+        setTimeout(() => {
+            clearInterval(animationInterval);
+
+            const winnerIndex = Math.floor(Math.random() * people.length);
+            const winner = people[winnerIndex];
+            setHighlightedPersonId(winner.id);
+
+            setPeople(prevPeople => {
+                const newPeople = prevPeople.map(p => ({
+                    ...p,
+                    assignments: { ...p.assignments }
+                }));
+                
+                // Clear the assignment for this item for ALL people first
+                newPeople.forEach(p => {
+                    if (p.assignments) {
+                        delete p.assignments[itemId];
+                    }
+                });
+
+                // Find the winner in the new array and assign the item
+                const winnerPerson = newPeople.find(p => p.id === winner.id);
+                if (winnerPerson) {
+                    if (!winnerPerson.assignments) {
+                        winnerPerson.assignments = {};
+                    }
+                    winnerPerson.assignments[itemId] = 1; // Assign fully to the winner
+                }
+
+                return newPeople;
+            });
+
+            // End animation state after a short delay to show the final result
+            setTimeout(() => {
+                setIsAnimatingRandom(false);
+                setHighlightedPersonId(null);
+            }, 500);
+
+        }, animationDuration);
     };
 
     const handleAssignmentChange = (personId: string, itemId: string) => {
@@ -216,24 +276,38 @@ const PeopleAssigner: React.FC<PeopleAssignerProps> = ({ items, people, setPeopl
 
                         <div>
                             <h5 className="font-semibold mb-3 text-center">Chi ha preso questo?</h5>
-                             <div className="flex justify-center mb-4">
+                             <div className="flex justify-center items-center gap-3 mb-4">
                                 <button
                                     onClick={() => handleSplitItemRoman(currentFocusItem.id)}
                                     className="flex items-center gap-2 px-3 py-1.5 border border-dashed border-border rounded-full hover:border-primary hover:text-primary text-sm justify-center disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                                    disabled={people.length < 1}
+                                    disabled={people.length < 1 || isAnimatingRandom}
                                 >
                                     <UsersIcon className="w-4 h-4" />
                                     <span>Dividi tra tutti</span>
                                 </button>
+                                <button
+                                    onClick={() => handleAssignRandomly(currentFocusItem.id)}
+                                    className="flex items-center gap-2 px-3 py-1.5 border border-dashed border-border rounded-full hover:border-primary hover:text-primary text-sm justify-center disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                    disabled={people.length < 1 || isAnimatingRandom}
+                                >
+                                    <RandomIcon className="w-4 h-4" />
+                                    <span>Scegli a caso</span>
+                                </button>
                             </div>
                             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                                 {people.map(person => (
-                                    <label key={person.id} className={`flex items-center gap-3 p-3 border rounded-md cursor-pointer transition-all ${person.assignments?.[currentFocusItem.id] ? 'bg-primary/10 border-primary ring-1 ring-primary' : 'bg-muted/50 hover:bg-accent'}`}>
+                                    <label key={person.id} 
+                                        className={`flex items-center gap-3 p-3 border rounded-md cursor-pointer transition-all duration-150
+                                        ${person.assignments?.[currentFocusItem.id] ? 'bg-primary/10 border-primary ring-1 ring-primary' : 'bg-muted/50 hover:bg-accent'}
+                                        ${highlightedPersonId === person.id ? 'ring-2 ring-offset-2 ring-yellow-400 scale-105 shadow-lg' : ''}
+                                        ${isAnimatingRandom ? 'cursor-wait' : ''}
+                                    `}>
                                         <input
                                             type="checkbox"
                                             checked={!!person.assignments?.[currentFocusItem.id]}
                                             onChange={() => handleAssignmentChange(person.id, currentFocusItem.id)}
-                                            className="w-5 h-5 rounded text-primary bg-transparent border-border focus:ring-primary focus:ring-2 focus:ring-offset-2 focus:ring-offset-background"
+                                            disabled={isAnimatingRandom}
+                                            className="w-5 h-5 rounded text-primary bg-transparent border-border focus:ring-primary focus:ring-2 focus:ring-offset-2 focus:ring-offset-background disabled:cursor-wait"
                                         />
                                         <span className="font-medium truncate">{person.name}</span>
                                     </label>
@@ -244,14 +318,14 @@ const PeopleAssigner: React.FC<PeopleAssignerProps> = ({ items, people, setPeopl
                         <div className="flex justify-between mt-8">
                             <button 
                                 onClick={() => setFocusIndex(prev => prev - 1)} 
-                                disabled={focusIndex === 0}
+                                disabled={focusIndex === 0 || isAnimatingRandom}
                                 className="px-6 py-2 rounded-md font-semibold bg-secondary text-secondary-foreground hover:bg-secondary/80 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 Indietro
                             </button>
                             <button 
                                 onClick={() => setFocusIndex(prev => prev + 1)} 
-                                disabled={focusIndex >= items.length - 1}
+                                disabled={focusIndex >= items.length - 1 || isAnimatingRandom}
                                 className="px-6 py-2 rounded-md font-semibold bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                                 Avanti

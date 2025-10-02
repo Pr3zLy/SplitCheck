@@ -164,3 +164,9 @@ export const ColosseumIcon: React.FC<IconProps> = ({
     <path d="M74.667,117.492c-17.643,0-32,14.357-32,32v40.107c0,2.923,1.216,5.739,3.349,7.744c1.984,1.877,4.608,2.923,7.317,2.923c0.213,0,0.427,0,0.619-0.021l42.624-2.389c5.653-0.299,10.091-4.971,10.091-10.645v-37.717C106.667,131.849,92.309,117.492,74.667,117.492z M85.333,177.119L64,178.313v-28.821c0-5.867,4.779-10.667,10.667-10.667s10.667,4.8,10.667,10.667V177.119z" />
   </svg>
 );
+
+export const RandomIcon: React.FC<IconProps> = ({ className, ...props }) => (
+    <svg xmlns="http://www.w3.org/2000/svg" className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor" {...props}>
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.546-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+    </svg>
+);

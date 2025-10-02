@@ -4,7 +4,7 @@ import ItemEditor from './components/ItemEditor';
 import PeopleAssigner from './components/PeopleAssigner';
 import Loader from './components/Loader';
 import ThemeSwitcher from './components/ThemeSwitcher';
-import { RefreshIcon, LogoIcon, HeroIllustration, UploadIcon } from './components/icons';
+import { RefreshIcon, HeroIllustration, UploadIcon } from './components/icons';
 import { ReceiptItem, Person } from './types';
 import { extractItemsFromReceipt } from './services/geminiService';
 
@@ -232,7 +232,8 @@ function App() {
             <div className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-12 animate-fade-in">
                 <div className="md:w-1/2 lg:w-2/5 text-center md:text-left">
                     <h1 className="text-4xl lg:text-5xl font-extrabold mb-4 tracking-tight">Scansiona, dividi, risolto.</h1>
-                    <p className="text-lg text-muted-foreground mb-8">Scansiona lo scontrino con l'AI, assegna le spese e calcola le quote in un attimo. Gratuito, veloce e non richiede registrazioni.</p>
+                    <p className="text-lg text-muted-foreground mb-6">Dimentica la calcolatrice. Scatta una foto dello scontrino, l'AI estrarrà gli articoli per te. Assegna ogni prodotto e il gioco è fatto.</p>
+                    <p className="text-sm text-muted-foreground mb-8"><span className="font-semibold">Progetto 0-log:</span> la tua privacy è importante. Le immagini vengono elaborate all'istante e <span className="font-bold">mai</span> salvate.</p>
                     <FileUpload onFileUpload={handleFileUpload} />
                     {error && <p className="mt-4 text-sm text-destructive">{error}</p>}
                 </div>
@@ -258,7 +259,7 @@ function App() {
                 </div>
 
                 <div className="flex items-center gap-2 flex-shrink-0">
-                    <LogoIcon className="w-7 h-7 text-primary"/>
+                    <img src="https://i.imgur.com/58P64X0.png" alt="SplitCheck Logo" className="w-8 h-8 rounded-full breathing-animation" />
                     <h1 className="text-lg font-bold">SplitCheck</h1>
                 </div>
 
