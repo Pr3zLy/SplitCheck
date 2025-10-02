@@ -7,8 +7,10 @@ import ThemeSwitcher from './components/ThemeSwitcher';
 import { RefreshIcon, HeroIllustration, UploadIcon } from './components/icons';
 import { ReceiptItem, Person } from './types';
 import { extractItemsFromReceipt } from './services/geminiService';
+import ManualPeopleSetup from './components/ManualPeopleSetup';
+import ManualItemEntry from './components/ManualItemEntry';
 
-type AppState = 'idle' | 'loading' | 'editing' | 'assigning';
+type AppState = 'idle' | 'loading' | 'editing' | 'assigning' | 'manual_people' | 'manual_entry';
 
 function App() {
   const [theme, setTheme] = useState<'light' | 'dark'>(() => {
@@ -226,15 +228,54 @@ function App() {
             }}
           />
         );
+       case 'manual_people':
+        return (
+          <ManualPeopleSetup
+            people={people}
+            setPeople={setPeople}
+            onNext={() => {
+              setAppState('manual_entry');
+              window.scrollTo(0, 0);
+            }}
+            onBack={handleReset}
+          />
+        );
+      case 'manual_entry':
+        return (
+          <ManualItemEntry
+            items={items}
+            setItems={setItems}
+            people={people}
+            setPeople={setPeople}
+            onBack={() => {
+              setItems([]); // Clear items when going back to people setup
+              setAppState('manual_people');
+              window.scrollTo(0, 0);
+            }}
+          />
+        );
       case 'idle':
       default:
         return (
             <div className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-12 animate-fade-in">
                 <div className="md:w-1/2 lg:w-2/5 text-center md:text-left">
                     <h1 className="text-4xl lg:text-5xl font-extrabold mb-4 tracking-tight">Scansiona, dividi, risolto.</h1>
-                    <p className="text-lg text-muted-foreground mb-6">Dimentica la calcolatrice. Scatta una foto dello scontrino, l'AI estrarrà gli articoli per te. Assegna ogni prodotto e il gioco è fatto.</p>
+                    <p className="text-lg text-muted-foreground mb-6">Dimentica la calcolatrice. Scatta una foto dello scontrino o inserisci gli articoli manualmente. L'app farà i conti per te.</p>
                     <p className="text-sm text-muted-foreground mb-8"><span className="font-semibold">Progetto 0-log:</span> la tua privacy è importante. Le immagini vengono elaborate all'istante e <span className="font-bold">mai</span> salvate.</p>
-                    <FileUpload onFileUpload={handleFileUpload} />
+                     <div className="space-y-4">
+                        <FileUpload onFileUpload={handleFileUpload} />
+                        <div className="flex items-center gap-4">
+                            <hr className="flex-grow border-border" />
+                            <span className="text-sm text-muted-foreground">O</span>
+                            <hr className="flex-grow border-border" />
+                        </div>
+                        <button 
+                            onClick={() => setAppState('manual_people')}
+                            className="w-full bg-secondary text-secondary-foreground hover:bg-secondary/80 px-8 py-3 rounded-lg font-semibold transition-colors shadow-sm"
+                        >
+                            Inserisci Articoli Manualmente
+                        </button>
+                    </div>
                     {error && <p className="mt-4 text-sm text-destructive">{error}</p>}
                 </div>
                 <div className="md:w-1/2 lg:w-3/5">

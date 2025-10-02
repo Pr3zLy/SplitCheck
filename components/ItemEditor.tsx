@@ -47,13 +47,15 @@ const ItemEditor: React.FC<ItemEditorProps> = ({ items, setItems, onNext, imageU
     };
 
     const handleAddItem = () => {
-        const newItem: ReceiptItem = {
-            id: crypto.randomUUID(),
-            prodotto: '',
-            quantita: 1,
-            prezzo: 0,
-        };
-        setItems(prev => [...prev, newItem]);
+        setItems(prev => {
+            const newItem: ReceiptItem = {
+                id: crypto.randomUUID(),
+                prodotto: `Prodotto ${prev.length + 1}`,
+                quantita: 1,
+                prezzo: 0,
+            };
+            return [...prev, newItem];
+        });
     };
 
     const handleDeleteItem = (id: string) => {
