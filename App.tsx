@@ -4,7 +4,7 @@ import ItemEditor from './components/ItemEditor';
 import PeopleAssigner from './components/PeopleAssigner';
 import Loader from './components/Loader';
 import ThemeSwitcher from './components/ThemeSwitcher';
-import { RefreshIcon, HeroIllustration, UploadIcon } from './components/icons';
+import { RefreshIcon, HeroIllustration, UploadIcon, GithubIcon } from './components/icons';
 import { ReceiptItem, Person } from './types';
 import { extractItemsFromReceipt } from './services/geminiService';
 import ManualPeopleSetup from './components/ManualPeopleSetup';
@@ -257,29 +257,40 @@ function App() {
       case 'idle':
       default:
         return (
-            <div className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-12 animate-fade-in">
-                <div className="md:w-1/2 lg:w-2/5 text-center md:text-left">
-                    <h1 className="text-4xl lg:text-5xl font-extrabold mb-4 tracking-tight">Scansiona, dividi, risolto.</h1>
-                    <p className="text-lg text-muted-foreground mb-6">Dimentica la calcolatrice. Scatta una foto dello scontrino o inserisci gli articoli manualmente. L'app farà i conti per te.</p>
-                    <p className="text-sm text-muted-foreground mb-8"><span className="font-semibold">Progetto 0-log:</span> la tua privacy è importante. Le immagini vengono elaborate all'istante e <span className="font-bold">mai</span> salvate.</p>
-                     <div className="space-y-4">
-                        <FileUpload onFileUpload={handleFileUpload} />
-                        <div className="flex items-center gap-4">
-                            <hr className="flex-grow border-border" />
-                            <span className="text-sm text-muted-foreground">O</span>
-                            <hr className="flex-grow border-border" />
+            <div className="flex flex-col items-center justify-center animate-fade-in">
+                 <a
+                    href="https://github.com/Pr3zLy/SplitCheck"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 bg-card/50 border border-border px-3 py-1.5 rounded-full text-sm text-muted-foreground hover:text-foreground hover:border-primary/30 mb-8 transition-all shadow-sm"
+                >
+                    <GithubIcon className="w-4 h-4" />
+                    <span>Vedi il progetto su GitHub</span>
+                </a>
+                <div className="flex flex-col md:flex-row items-center justify-center gap-8 md:gap-12 w-full">
+                    <div className="md:w-1/2 lg:w-2/5 text-center md:text-left">
+                        <h1 className="text-4xl lg:text-5xl font-extrabold mb-4 tracking-tight">Scansiona, dividi, risolto.</h1>
+                        <p className="text-lg text-muted-foreground mb-6">Dimentica la calcolatrice. Scatta una foto dello scontrino o inserisci gli articoli manualmente. L'app farà i conti per te.</p>
+                        <p className="text-sm text-muted-foreground mb-8"><span className="font-semibold">Progetto 0-log:</span> la tua privacy è importante. Le immagini vengono elaborate all'istante e <span className="font-bold">mai</span> salvate.</p>
+                        <div className="space-y-4">
+                            <FileUpload onFileUpload={handleFileUpload} />
+                            <div className="flex items-center gap-4">
+                                <hr className="flex-grow border-border" />
+                                <span className="text-sm text-muted-foreground">O</span>
+                                <hr className="flex-grow border-border" />
+                            </div>
+                            <button 
+                                onClick={() => setAppState('manual_people')}
+                                className="w-full bg-secondary text-secondary-foreground hover:bg-secondary/80 px-8 py-3 rounded-lg font-semibold transition-colors shadow-sm"
+                            >
+                                Inserisci Articoli Manualmente
+                            </button>
                         </div>
-                        <button 
-                            onClick={() => setAppState('manual_people')}
-                            className="w-full bg-secondary text-secondary-foreground hover:bg-secondary/80 px-8 py-3 rounded-lg font-semibold transition-colors shadow-sm"
-                        >
-                            Inserisci Articoli Manualmente
-                        </button>
+                        {error && <p className="mt-4 text-sm text-destructive">{error}</p>}
                     </div>
-                    {error && <p className="mt-4 text-sm text-destructive">{error}</p>}
-                </div>
-                <div className="md:w-1/2 lg:w-3/5">
-                    <HeroIllustration className="w-full h-auto max-w-lg mx-auto breathing-animation"/>
+                    <div className="md:w-1/2 lg:w-3/5">
+                        <HeroIllustration className="w-full h-auto max-w-lg mx-auto breathing-animation"/>
+                    </div>
                 </div>
             </div>
         );
