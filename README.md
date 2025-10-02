@@ -4,7 +4,7 @@
   <p align="center">
     Scansiona, dividi, risolto.
     <br />
-    <a href="https://splitcheck.vercel.app/"><strong>Visita il sito »</strong></a>
+    <a href="https://splitcheck.pages.dev/"><strong>Visita il sito »</strong></a>
   </p>
 </div>
 
@@ -42,7 +42,7 @@ Una volta inseriti gli articoli, puoi assegnare ogni spesa a una o più persone 
 
 ## Come utilizzarlo
 
-1.  **Visita il sito**: Apri [SplitCheck](https://splitcheck.vercel.app/).
+1.  **Visita il sito**: Apri [SplitCheck](https://splitcheck.pages.dev/).
 2.  **Scegli una modalità**:
     - Clicca su **Carica Scontrino** per utilizzare la fotocamera o caricare un'immagine. L'AI analizzerà lo scontrino e ti mostrerà gli articoli.
     - Clicca su **Inserisci Articoli Manualmente** per iniziare ad aggiungere le persone e poi gli articoli.
