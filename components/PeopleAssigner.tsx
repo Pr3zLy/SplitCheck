@@ -8,18 +8,81 @@ interface PeopleAssignerProps {
     people: Person[];
     setPeople: React.Dispatch<React.SetStateAction<Person[]>>;
     onBack: () => void;
+    language: 'it' | 'en';
 }
 
-const PeopleAssigner: React.FC<PeopleAssignerProps> = ({ items, people, setPeople, onBack }) => {
+const translations = {
+    it: {
+        back: 'Indietro',
+        title: 'Dividi il Conto',
+        description: 'Aggiungi le persone e assegna ogni articolo. Scegli la vista che preferisci: a lista o focus.',
+        participants: 'Partecipanti',
+        personPlaceholder: 'Nome persona',
+        addPerson: 'Aggiungi persona',
+        splitAllRoman: 'Dividi tutto alla romana',
+        assignItems: 'Assegna Articoli',
+        listView: 'Lista',
+        focusView: 'Focus',
+        item: 'Articolo',
+        split: 'Dividi',
+        splitThisRoman: 'Dividi questo articolo alla romana',
+        price: 'Prezzo',
+        scrollHint: 'Scorri la tabella per vedere tutti i partecipanti →',
+        warning: 'Attenzione:',
+        unassigned_one: 'articolo non è stato assegnato',
+        unassigned_other: 'articoli non sono stati assegnati',
+        itemOf: (current: number, total: number) => `Articolo ${current} di ${total}`,
+        quantity: 'Quantità:',
+        whoGotThis: 'Chi ha preso questo?',
+        splitAmongAll: 'Dividi tra tutti',
+        chooseRandomly: 'Scegli a caso',
+        prev: 'Indietro',
+        next: 'Avanti',
+        noItemsToAssign: 'Nessun articolo da assegnare.',
+        goBackToEdit: 'Torna alla modifica degli articoli',
+    },
+    en: {
+        back: 'Back',
+        title: 'Split the Bill',
+        description: 'Add people and assign each item. Choose your preferred view: list or focus.',
+        participants: 'Participants',
+        personPlaceholder: 'Person\'s name',
+        addPerson: 'Add person',
+        splitAllRoman: 'Split everything evenly',
+        assignItems: 'Assign Items',
+        listView: 'List',
+        focusView: 'Focus',
+        item: 'Item',
+        split: 'Split',
+        splitThisRoman: 'Split this item evenly',
+        price: 'Price',
+        scrollHint: 'Scroll the table to see all participants →',
+        warning: 'Warning:',
+        unassigned_one: 'item has not been assigned',
+        unassigned_other: 'items have not been assigned',
+        itemOf: (current: number, total: number) => `Item ${current} of ${total}`,
+        quantity: 'Quantity:',
+        whoGotThis: 'Who got this?',
+        splitAmongAll: 'Split among all',
+        chooseRandomly: 'Choose randomly',
+        prev: 'Back',
+        next: 'Next',
+        noItemsToAssign: 'No items to assign.',
+        goBackToEdit: 'Go back to item editor',
+    }
+};
+
+const PeopleAssigner: React.FC<PeopleAssignerProps> = ({ items, people, setPeople, onBack, language }) => {
     const [viewMode, setViewMode] = useState<'list' | 'focus'>('focus');
     const [focusIndex, setFocusIndex] = useState(0);
     const [isAnimatingRandom, setIsAnimatingRandom] = useState(false);
     const [highlightedPersonId, setHighlightedPersonId] = useState<string | null>(null);
+    const t = translations[language];
     
     const handleAddPerson = () => {
         setPeople(prev => [
             ...prev,
-            { id: crypto.randomUUID(), name: `Persona ${prev.length + 1}`, assignments: {} }
+            { id: crypto.randomUUID(), name: language === 'it' ? `Persona ${prev.length + 1}` : `Person ${prev.length + 1}`, assignments: {} }
         ]);
     };
 
@@ -170,7 +233,7 @@ const PeopleAssigner: React.FC<PeopleAssignerProps> = ({ items, people, setPeopl
         if (unassignedItems.length === 0) return null;
         return (
             <div className="mt-4 p-3 bg-yellow-100 dark:bg-yellow-900/20 border border-yellow-300 dark:border-yellow-700 rounded-md text-yellow-800 dark:text-yellow-200 text-sm">
-                <strong>Attenzione:</strong> {unassignedItems.length} {unassignedItems.length === 1 ? 'articolo non è stato assegnato' : 'articoli non sono stati assegnati'}.
+                <strong>{t.warning}</strong> {unassignedItems.length} {unassignedItems.length === 1 ? t.unassigned_one : t.unassigned_other}.
             </div>
         );
     };
@@ -180,18 +243,18 @@ const PeopleAssigner: React.FC<PeopleAssignerProps> = ({ items, people, setPeopl
             <button 
                 onClick={() => setViewMode('list')} 
                 className={`px-2 py-1 text-sm rounded-md flex items-center gap-1.5 transition-colors ${viewMode === 'list' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
-                aria-label="Vista a lista"
+                aria-label={t.listView}
             >
                 <ListIcon className="w-4 h-4" />
-                <span>Lista</span>
+                <span>{t.listView}</span>
             </button>
             <button 
                 onClick={() => setViewMode('focus')}
                 className={`px-2 py-1 text-sm rounded-md flex items-center gap-1.5 transition-colors ${viewMode === 'focus' ? 'bg-background shadow-sm text-foreground' : 'text-muted-foreground hover:text-foreground'}`}
-                aria-label="Vista focus"
+                aria-label={t.focusView}
             >
                 <FocusIcon className="w-4 h-4" />
-                <span>Focus</span>
+                <span>{t.focusView}</span>
             </button>
         </div>
     );
@@ -199,17 +262,17 @@ const PeopleAssigner: React.FC<PeopleAssignerProps> = ({ items, people, setPeopl
     const renderListView = () => (
         <>
             <div className="flex justify-between items-center mb-2">
-                <h3 className="text-xl font-semibold">Assegna Articoli</h3>
+                <h3 className="text-xl font-semibold">{t.assignItems}</h3>
                 <ViewModeSwitcher />
             </div>
             <div className="overflow-x-auto border border-border rounded-lg bg-card">
                 <table className="w-full text-left text-sm">
                     <thead className="bg-muted">
                         <tr className="border-b border-border">
-                            <th className="sticky left-0 bg-muted p-3 font-medium text-muted-foreground z-10">Articolo</th>
-                            <th className="p-3 font-medium text-muted-foreground text-center" title="Dividi alla romana">Dividi</th>
+                            <th className="sticky left-0 bg-muted p-3 font-medium text-muted-foreground z-10">{t.item}</th>
+                            <th className="p-3 font-medium text-muted-foreground text-center" title={t.splitThisRoman}>{t.split}</th>
                             {people.map(p => <th key={p.id} className="px-2 py-3 text-center font-medium text-muted-foreground whitespace-nowrap">{p.name}</th>)}
-                            <th className="sticky right-0 bg-muted p-3 text-right font-medium text-muted-foreground z-10">Prezzo</th>
+                            <th className="sticky right-0 bg-muted p-3 text-right font-medium text-muted-foreground z-10">{t.price}</th>
                         </tr>
                     </thead>
                     <tbody className="text-card-foreground">
@@ -220,7 +283,7 @@ const PeopleAssigner: React.FC<PeopleAssignerProps> = ({ items, people, setPeopl
                                     <button
                                         onClick={() => handleSplitItemRoman(item.id)}
                                         className="p-1.5 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-full transition-colors disabled:opacity-50"
-                                        aria-label="Dividi questo articolo alla romana"
+                                        aria-label={t.splitThisRoman}
                                         disabled={people.length < 1}
                                     >
                                         <UsersIcon className="w-5 h-5" />
@@ -243,7 +306,7 @@ const PeopleAssigner: React.FC<PeopleAssignerProps> = ({ items, people, setPeopl
                 </table>
             </div>
              <p className="text-xs text-center text-muted-foreground mt-2 md:hidden">
-                Scorri la tabella per vedere tutti i partecipanti &rarr;
+                {t.scrollHint}
             </p>
             <UnassignedWarning />
         </>
@@ -255,7 +318,7 @@ const PeopleAssigner: React.FC<PeopleAssignerProps> = ({ items, people, setPeopl
         return (
             <>
                 <div className="flex justify-between items-center mb-2">
-                    <h3 className="text-xl font-semibold">Assegna Articoli</h3>
+                    <h3 className="text-xl font-semibold">{t.assignItems}</h3>
                     <ViewModeSwitcher />
                 </div>
                 
@@ -266,16 +329,16 @@ const PeopleAssigner: React.FC<PeopleAssignerProps> = ({ items, people, setPeopl
                         </div>
 
                         <div className="text-center pt-2">
-                            <p className="text-sm text-muted-foreground">Articolo {focusIndex + 1} di {items.length}</p>
+                            <p className="text-sm text-muted-foreground">{t.itemOf(focusIndex + 1, items.length)}</p>
                             <h4 className="text-2xl font-bold mt-2">{currentFocusItem.prodotto}</h4>
-                            <p className="text-muted-foreground">Quantità: {currentFocusItem.quantita}</p>
+                            <p className="text-muted-foreground">{t.quantity} {currentFocusItem.quantita}</p>
                             <p className="text-3xl font-mono font-bold mt-2">€{(currentFocusItem.prezzo * currentFocusItem.quantita).toFixed(2)}</p>
                         </div>
 
                         <hr className="my-6 border-border" />
 
                         <div>
-                            <h5 className="font-semibold mb-3 text-center">Chi ha preso questo?</h5>
+                            <h5 className="font-semibold mb-3 text-center">{t.whoGotThis}</h5>
                              <div className="flex justify-center items-center gap-3 mb-4">
                                 <button
                                     onClick={() => handleSplitItemRoman(currentFocusItem.id)}
@@ -283,7 +346,7 @@ const PeopleAssigner: React.FC<PeopleAssignerProps> = ({ items, people, setPeopl
                                     disabled={people.length < 1 || isAnimatingRandom}
                                 >
                                     <UsersIcon className="w-4 h-4" />
-                                    <span>Dividi tra tutti</span>
+                                    <span>{t.splitAmongAll}</span>
                                 </button>
                                 <button
                                     onClick={() => handleAssignRandomly(currentFocusItem.id)}
@@ -291,7 +354,7 @@ const PeopleAssigner: React.FC<PeopleAssignerProps> = ({ items, people, setPeopl
                                     disabled={people.length < 1 || isAnimatingRandom}
                                 >
                                     <RandomIcon className="w-4 h-4" />
-                                    <span>Scegli a caso</span>
+                                    <span>{t.chooseRandomly}</span>
                                 </button>
                             </div>
                             <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
@@ -321,20 +384,20 @@ const PeopleAssigner: React.FC<PeopleAssignerProps> = ({ items, people, setPeopl
                                 disabled={focusIndex === 0 || isAnimatingRandom}
                                 className="px-6 py-2 rounded-md font-semibold bg-secondary text-secondary-foreground hover:bg-secondary/80 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                                Indietro
+                                {t.prev}
                             </button>
                             <button 
                                 onClick={() => setFocusIndex(prev => prev + 1)} 
                                 disabled={focusIndex >= items.length - 1 || isAnimatingRandom}
                                 className="px-6 py-2 rounded-md font-semibold bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                                Avanti
+                                {t.next}
                             </button>
                         </div>
                     </div>
                 ) : (
                     <div className="text-center py-12 border-2 border-dashed border-border rounded-lg">
-                        <p className="text-muted-foreground">Nessun articolo da assegnare.</p>
+                        <p className="text-muted-foreground">{t.noItemsToAssign}</p>
                     </div>
                 )}
                 <UnassignedWarning />
@@ -350,16 +413,16 @@ const PeopleAssigner: React.FC<PeopleAssignerProps> = ({ items, people, setPeopl
                     <button 
                         onClick={onBack}
                         className="flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors mb-4 lg:mb-0"
-                        aria-label="Torna alla modifica degli articoli"
+                        aria-label={t.goBackToEdit}
                     >
                         <ArrowLeftIcon className="w-4 h-4" />
-                        <span>Indietro</span>
+                        <span>{t.back}</span>
                     </button>
                 </div>
                 <div className="text-center w-full">
-                    <h2 className="text-3xl font-bold">Dividi il Conto</h2>
+                    <h2 className="text-3xl font-bold">{t.title}</h2>
                     <p className="text-muted-foreground mt-2 max-w-2xl mx-auto">
-                        Aggiungi le persone e assegna ogni articolo. Scegli la vista che preferisci: a lista o focus.
+                        {t.description}
                     </p>
                 </div>
             </div>
@@ -368,7 +431,7 @@ const PeopleAssigner: React.FC<PeopleAssignerProps> = ({ items, people, setPeopl
                 {/* People List & Summary Column */}
                 <div className="lg:col-span-2 lg:sticky lg:top-28 self-start space-y-4">
                     <div className="space-y-3 p-4 border border-border rounded-lg bg-card/50">
-                        <h3 className="text-xl font-semibold mb-2">Partecipanti</h3>
+                        <h3 className="text-xl font-semibold mb-2">{t.participants}</h3>
                         {people.map(person => (
                             <div key={person.id} className="flex items-center gap-3">
                                 <UserIcon className="w-5 h-5 text-muted-foreground flex-shrink-0" />
@@ -378,7 +441,7 @@ const PeopleAssigner: React.FC<PeopleAssignerProps> = ({ items, people, setPeopl
                                     onFocus={(e) => e.target.select()}
                                     onChange={(e) => handlePersonNameChange(person.id, e.target.value)}
                                     className="flex-grow bg-input border border-border rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-ring focus:border-primary outline-none"
-                                    placeholder="Nome persona"
+                                    placeholder={t.personPlaceholder}
                                 />
                                 <button onClick={() => handleRemovePerson(person.id)} className="p-2 text-muted-foreground hover:text-destructive disabled:opacity-50" disabled={people.length <= 1} tabIndex={-1}>
                                     <TrashIcon className="w-5 h-5" />
@@ -387,15 +450,15 @@ const PeopleAssigner: React.FC<PeopleAssignerProps> = ({ items, people, setPeopl
                         ))}
                         <button onClick={handleAddPerson} className="w-full flex items-center justify-center gap-2 px-4 py-2 border border-dashed border-border rounded-md hover:border-primary hover:text-primary text-sm">
                             <PlusIcon className="w-5 h-5" />
-                            Aggiungi persona
+                            {t.addPerson}
                         </button>
                         <button onClick={handleSplitAllRoman} className="w-full mt-2 flex items-center justify-center gap-2 px-4 py-2 bg-secondary text-secondary-foreground rounded-md hover:bg-secondary/80 text-sm font-semibold">
                             <ColosseumIcon className="w-8 h-8" />
-                            Dividi tutto alla romana
+                            {t.splitAllRoman}
                         </button>
                     </div>
 
-                    <SummaryView items={items} people={people} />
+                    <SummaryView items={items} people={people} language={language} />
                 </div>
                 
                 <div className="lg:col-span-3">

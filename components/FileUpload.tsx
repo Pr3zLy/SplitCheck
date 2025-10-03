@@ -3,10 +3,27 @@ import { UploadIcon } from './icons';
 
 interface FileUploadProps {
   onFileUpload: (file: File) => void;
+  language: 'it' | 'en';
 }
 
-const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload }) => {
+const translations = {
+    it: {
+        dropHere: "Rilascia l'immagine qui",
+        dragOrClick: "Trascina qui l'immagine dello scontrino",
+        selectFile: "o clicca per selezionarla",
+        supportedFiles: "File supportati: JPG, PNG, WEBP",
+    },
+    en: {
+        dropHere: "Drop the image here",
+        dragOrClick: "Drag and drop the receipt image here",
+        selectFile: "or click to select it",
+        supportedFiles: "Supported files: JPG, PNG, WEBP",
+    }
+};
+
+const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload, language }) => {
   const [isDragActive, setIsDragActive] = useState(false);
+  const t = translations[language];
 
   const handleFile = useCallback((file: File | null) => {
     if (file && file.type.startsWith('image/')) {
@@ -50,12 +67,12 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFileUpload }) => {
             <input id="dropzone-file" type="file" className="hidden" onChange={handleChange} accept="image/*" />
             <UploadIcon className="w-12 h-12 text-muted-foreground mb-4" />
             {isDragActive ? (
-            <p className="text-primary font-semibold">Rilascia l'immagine qui</p>
+            <p className="text-primary font-semibold">{t.dropHere}</p>
             ) : (
             <>
-                <p className="font-semibold text-foreground">Trascina qui l'immagine dello scontrino</p>
-                <p className="text-muted-foreground">o clicca per selezionarla</p>
-                <p className="text-xs text-muted-foreground mt-2">File supportati: JPG, PNG, WEBP</p>
+                <p className="font-semibold text-foreground">{t.dragOrClick}</p>
+                <p className="text-muted-foreground">{t.selectFile}</p>
+                <p className="text-xs text-muted-foreground mt-2">{t.supportedFiles}</p>
             </>
             )}
         </label>

@@ -7,13 +7,37 @@ interface ManualPeopleSetupProps {
     setPeople: React.Dispatch<React.SetStateAction<Person[]>>;
     onNext: () => void;
     onBack: () => void;
+    language: 'it' | 'en';
 }
 
-const ManualPeopleSetup: React.FC<ManualPeopleSetupProps> = ({ people, setPeople, onNext, onBack }) => {
+const translations = {
+    it: {
+        back: 'Indietro',
+        title: 'Chi partecipa?',
+        description: 'Aggiungi le persone che divideranno il conto.',
+        participants: 'Partecipanti',
+        personPlaceholder: 'Nome persona',
+        addPerson: 'Aggiungi persona',
+        next: 'Avanti',
+    },
+    en: {
+        back: 'Back',
+        title: 'Who\'s splitting?',
+        description: 'Add the people who are splitting the bill.',
+        participants: 'Participants',
+        personPlaceholder: 'Person\'s name',
+        addPerson: 'Add person',
+        next: 'Next',
+    }
+};
+
+const ManualPeopleSetup: React.FC<ManualPeopleSetupProps> = ({ people, setPeople, onNext, onBack, language }) => {
+    const t = translations[language];
+    
     const handleAddPerson = () => {
         setPeople(prev => [
             ...prev,
-            { id: crypto.randomUUID(), name: `Persona ${prev.length + 1}`, assignments: {} }
+            { id: crypto.randomUUID(), name: language === 'it' ? `Persona ${prev.length + 1}` : `Person ${prev.length + 1}`, assignments: {} }
         ]);
     };
 
@@ -32,22 +56,22 @@ const ManualPeopleSetup: React.FC<ManualPeopleSetupProps> = ({ people, setPeople
                     <button 
                         onClick={onBack}
                         className="flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors mb-4 lg:mb-0"
-                        aria-label="Torna indietro"
+                        aria-label={t.back}
                     >
                         <ArrowLeftIcon className="w-4 h-4" />
-                        <span>Indietro</span>
+                        <span>{t.back}</span>
                     </button>
                 </div>
                 <div className="text-center w-full lg:col-start-2">
-                    <h2 className="text-3xl font-bold">Chi partecipa?</h2>
+                    <h2 className="text-3xl font-bold">{t.title}</h2>
                     <p className="text-muted-foreground mt-2">
-                        Aggiungi le persone che divideranno il conto.
+                        {t.description}
                     </p>
                 </div>
             </div>
             
             <div className="space-y-3 p-6 border border-border rounded-lg bg-card/50">
-                <h3 className="text-xl font-semibold mb-2">Partecipanti</h3>
+                <h3 className="text-xl font-semibold mb-2">{t.participants}</h3>
                 {people.map(person => (
                     <div key={person.id} className="flex items-center gap-3">
                         <UserIcon className="w-5 h-5 text-muted-foreground flex-shrink-0" />
@@ -57,7 +81,7 @@ const ManualPeopleSetup: React.FC<ManualPeopleSetupProps> = ({ people, setPeople
                             onFocus={(e) => e.target.select()}
                             onChange={(e) => handlePersonNameChange(person.id, e.target.value)}
                             className="flex-grow bg-input border border-border rounded-md px-3 py-2 text-sm focus:ring-2 focus:ring-ring focus:border-primary outline-none"
-                            placeholder="Nome persona"
+                            placeholder={t.personPlaceholder}
                         />
                         <button onClick={() => handleRemovePerson(person.id)} className="p-2 text-muted-foreground hover:text-destructive disabled:opacity-50" disabled={people.length <= 1} tabIndex={-1}>
                             <TrashIcon className="w-5 h-5" />
@@ -66,7 +90,7 @@ const ManualPeopleSetup: React.FC<ManualPeopleSetupProps> = ({ people, setPeople
                 ))}
                 <button onClick={handleAddPerson} className="w-full flex items-center justify-center gap-2 px-4 py-2 border border-dashed border-border rounded-md hover:border-primary hover:text-primary text-sm">
                     <PlusIcon className="w-5 h-5" />
-                    Aggiungi persona
+                    {t.addPerson}
                 </button>
             </div>
              <div className="mt-8 text-center">
@@ -75,7 +99,7 @@ const ManualPeopleSetup: React.FC<ManualPeopleSetupProps> = ({ people, setPeople
                     disabled={people.length === 0}
                     className="bg-primary text-primary-foreground hover:bg-primary/90 px-8 py-3 rounded-full font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-lg shadow-lg hover:shadow-primary/30"
                 >
-                    Avanti
+                    {t.next}
                 </button>
             </div>
         </div>

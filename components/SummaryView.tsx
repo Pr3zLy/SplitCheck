@@ -5,10 +5,29 @@ import { CopyIcon } from './icons';
 interface SummaryViewProps {
     items: ReceiptItem[];
     people: Person[];
+    language: 'it' | 'en';
 }
 
-const SummaryView: React.FC<SummaryViewProps> = ({ items, people }) => {
+const translations = {
+    it: {
+        summary: 'Riepilogo',
+        copy: 'Copia',
+        copied: 'Copiato!',
+        grandTotal: 'Totale Generale',
+        summaryTextTitle: 'Riepilogo Conto:',
+    },
+    en: {
+        summary: 'Summary',
+        copy: 'Copy',
+        copied: 'Copied!',
+        grandTotal: 'Grand Total',
+        summaryTextTitle: 'Bill Summary:',
+    }
+};
+
+const SummaryView: React.FC<SummaryViewProps> = ({ items, people, language }) => {
     const [copied, setCopied] = useState(false);
+    const t = translations[language];
 
     const totals = useMemo(() => {
         return people.map(person => {
@@ -32,13 +51,13 @@ const SummaryView: React.FC<SummaryViewProps> = ({ items, people }) => {
     const grandTotal = items.reduce((acc, item) => acc + item.prezzo * item.quantita, 0);
 
     const summaryText = useMemo(() => {
-        let text = `Riepilogo Conto:\n------------------\n`;
+        let text = `${t.summaryTextTitle}\n------------------\n`;
         totals.forEach(p => {
             text += `${p.name}: €${p.total.toFixed(2)}\n`;
         });
-        text += `------------------\nTotale Generale: €${grandTotal.toFixed(2)}`;
+        text += `------------------\n${t.grandTotal}: €${grandTotal.toFixed(2)}`;
         return text;
-    }, [totals, grandTotal]);
+    }, [totals, grandTotal, t]);
 
     const handleCopy = () => {
         navigator.clipboard.writeText(summaryText).then(() => {
@@ -54,10 +73,10 @@ const SummaryView: React.FC<SummaryViewProps> = ({ items, people }) => {
     return (
         <div className="bg-card border border-border rounded-lg p-6 animate-fade-in">
             <div className="flex justify-between items-center mb-4">
-                <h3 className="text-xl font-semibold">Riepilogo</h3>
+                <h3 className="text-xl font-semibold">{t.summary}</h3>
                 <button onClick={handleCopy} className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
                     <CopyIcon className="w-4 h-4" />
-                    {copied ? 'Copiato!' : 'Copia'}
+                    {copied ? t.copied : t.copy}
                 </button>
             </div>
             
@@ -73,7 +92,7 @@ const SummaryView: React.FC<SummaryViewProps> = ({ items, people }) => {
             <hr className="my-4 border-border" />
 
             <div className="flex justify-between items-center font-bold text-lg">
-                <span>Totale Generale</span>
+                <span>{t.grandTotal}</span>
                 <span className="font-mono">€{grandTotal.toFixed(2)}</span>
             </div>
         </div>

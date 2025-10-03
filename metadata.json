@@ -1,5 +1,0 @@
-{
-  "name": "SplitCheck",
-  "description": "An AI-powered web app to easily split receipt costs. Upload a photo of your receipt, review and edit the items extracted by AI, assign them to people, and get a final summary of who owes what.",
-  "requestFramePermissions": []
-}

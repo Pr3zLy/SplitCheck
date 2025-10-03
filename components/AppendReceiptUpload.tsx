@@ -4,10 +4,23 @@ import { UploadIcon } from './icons';
 interface AppendReceiptUploadProps {
   onFileUpload: (file: File) => void;
   disabled?: boolean;
+  language: 'it' | 'en';
 }
 
-const AppendReceiptUpload: React.FC<AppendReceiptUploadProps> = ({ onFileUpload, disabled }) => {
+const translations = {
+    it: {
+        dropHere: "Rilascia qui",
+        addReceipt: "Aggiungi scontrino",
+    },
+    en: {
+        dropHere: "Drop here",
+        addReceipt: "Add receipt",
+    }
+};
+
+const AppendReceiptUpload: React.FC<AppendReceiptUploadProps> = ({ onFileUpload, disabled, language }) => {
   const [isDragActive, setIsDragActive] = useState(false);
+  const t = translations[language];
 
   const handleFile = useCallback((file: File | null) => {
     if (file && file.type.startsWith('image/')) {
@@ -54,9 +67,9 @@ const AppendReceiptUpload: React.FC<AppendReceiptUploadProps> = ({ onFileUpload,
             <input id="append-receipt-file" type="file" className="hidden" onChange={handleChange} accept="image/*" disabled={disabled} />
             <UploadIcon className="w-5 h-5 text-muted-foreground" />
             {isDragActive ? (
-                <span className="font-semibold text-primary">Rilascia qui</span>
+                <span className="font-semibold text-primary">{t.dropHere}</span>
             ) : (
-                <span className="text-muted-foreground whitespace-nowrap">Aggiungi scontrino</span>
+                <span className="text-muted-foreground whitespace-nowrap">{t.addReceipt}</span>
             )}
         </label>
     </div>
