@@ -72,9 +72,9 @@ Per eseguire l'applicazione in locale, segui questi passaggi:
     ```sh
     npm install
     ```
-4.  Crea un file `.env` nella root del progetto e aggiungi la tua API key di Gemini:
+4.  Crea un file `.env.local` nella root del progetto e aggiungi la tua API key di Gemini:
     ```
-    VITE_GEMINI_API_KEY=LA_TUA_API_KEY
+    GEMINI_API_KEY=LA_TUA_API_KEY
     ```
 5.  Avvia l'applicazione:
     ```sh
