@@ -384,13 +384,14 @@ function App() {
     <div className="bg-background text-foreground min-h-[100svh] flex flex-col">
        <header className="fixed top-4 left-1/2 -translate-x-1/2 w-[95%] max-w-2xl mx-auto p-2 rounded-full border border-border/20 bg-background/60 backdrop-blur-xl shadow-lg z-50 glow-border header-animate">
             <div className="flex items-center justify-between w-full">
-                <div className="w-28 flex justify-start">
+                <div className="flex-1 flex justify-start items-center gap-2">
                     {appState !== 'idle' && (
                         <button onClick={handleReset} className="flex items-center gap-2 px-3 py-1.5 rounded-full text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-accent transition-colors" aria-label="Ricomincia da capo">
                             <RefreshIcon className="w-4 h-4" />
                             <span>{t.new}</span>
                         </button>
                     )}
+                    <LanguageSwitcher />
                 </div>
 
                 <div className="flex items-center gap-2 flex-shrink-0">
@@ -398,8 +399,7 @@ function App() {
                     <h1 className="text-lg font-bold">SplitCheck</h1>
                 </div>
 
-                <div className="w-28 flex justify-end items-center gap-2">
-                    <LanguageSwitcher />
+                <div className="flex-1 flex justify-end items-center">
                     <ThemeSwitcher theme={theme} toggleTheme={toggleTheme} language={language} />
                 </div>
             </div>
