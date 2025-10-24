@@ -1,7 +1,9 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Person, ReceiptItem } from '../types';
 import { PlusIcon, TrashIcon, ArrowLeftIcon, ListIcon, FocusIcon, UsersIcon, RandomIcon, ColosseumIcon } from './icons';
 import SummaryView from './SummaryView';
+import Calculator, { CalculatorState } from './Calculator';
+import FloatingButtons from './FloatingButtons';
 
 interface ManualItemEntryProps {
     items: ReceiptItem[];
@@ -66,9 +68,21 @@ const ManualItemEntry: React.FC<ManualItemEntryProps> = ({ items, setItems, peop
     const [focusIndex, setFocusIndex] = useState(0);
     const [isAnimatingRandom, setIsAnimatingRandom] = useState(false);
     const [highlightedPersonId, setHighlightedPersonId] = useState<string | null>(null);
+    const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
+    const [calculatorState, setCalculatorState] = useState<CalculatorState>({
+        expression: '0',
+        lastExpression: '',
+        calcHistory: [],
+        isResult: false,
+    });
+    const summaryRef = useRef<HTMLDivElement>(null);
     const t = translations[language];
+    
+    const scrollToSummary = () => {
+        summaryRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    };
 
-    const handleAddItem = () => {
+    const handleAddItem = useCallback(() => {
         setItems(prev => {
             const newItem: ReceiptItem = {
                 id: crypto.randomUUID(),
@@ -82,15 +96,14 @@ const ManualItemEntry: React.FC<ManualItemEntryProps> = ({ items, setItems, peop
             }
             return [...prev, newItem];
         });
-    };
+    }, [language, viewMode]);
 
     // Add first item if list is empty
     useEffect(() => {
         if (items.length === 0) {
             handleAddItem();
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    }, [items.length, handleAddItem]);
 
     const handleDeleteItem = (id: string) => {
         const itemIndex = items.findIndex(i => i.id === id);
@@ -451,7 +464,7 @@ const ManualItemEntry: React.FC<ManualItemEntryProps> = ({ items, setItems, peop
 
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
                 {/* Summary Column */}
-                <div className="lg:col-span-2 lg:sticky lg:top-28 self-start space-y-4">
+                <div ref={summaryRef} className="lg:col-span-2 lg:sticky lg:top-28 self-start space-y-4">
                     <SummaryView items={items} people={people} language={language} />
                      <div className="bg-card border border-border rounded-lg p-4">
                         <button onClick={handleSplitAllRoman} disabled={items.length === 0 || people.length === 0} className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-secondary text-secondary-foreground rounded-md hover:bg-secondary/80 text-sm font-semibold disabled:opacity-50 disabled:cursor-not-allowed">
@@ -466,6 +479,14 @@ const ManualItemEntry: React.FC<ManualItemEntryProps> = ({ items, setItems, peop
                     {viewMode === 'list' ? renderListView() : renderFocusView()}
                 </div>
             </div>
+            
+            <FloatingButtons 
+                onCalculatorClick={() => setIsCalculatorOpen(true)}
+                onScrollClick={scrollToSummary}
+                language={language}
+            />
+            
+            {isCalculatorOpen && <Calculator onClose={() => setIsCalculatorOpen(false)} state={calculatorState} setState={setCalculatorState} />}
         </div>
     );
 };

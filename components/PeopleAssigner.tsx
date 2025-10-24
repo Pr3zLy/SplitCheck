@@ -1,7 +1,9 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useRef } from 'react';
 import { Person, ReceiptItem } from '../types';
 import { PlusIcon, TrashIcon, UserIcon, UsersIcon, ListIcon, FocusIcon, ArrowLeftIcon, ColosseumIcon, RandomIcon } from './icons';
 import SummaryView from './SummaryView';
+import Calculator, { CalculatorState } from './Calculator';
+import FloatingButtons from './FloatingButtons';
 
 interface PeopleAssignerProps {
     items: ReceiptItem[];
@@ -77,7 +79,19 @@ const PeopleAssigner: React.FC<PeopleAssignerProps> = ({ items, people, setPeopl
     const [focusIndex, setFocusIndex] = useState(0);
     const [isAnimatingRandom, setIsAnimatingRandom] = useState(false);
     const [highlightedPersonId, setHighlightedPersonId] = useState<string | null>(null);
+    const [isCalculatorOpen, setIsCalculatorOpen] = useState(false);
+    const [calculatorState, setCalculatorState] = useState<CalculatorState>({
+        expression: '0',
+        lastExpression: '',
+        calcHistory: [],
+        isResult: false,
+    });
+    const summaryRef = useRef<HTMLDivElement>(null);
     const t = translations[language];
+
+    const scrollToSummary = () => {
+        summaryRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    };
     
     const handleAddPerson = () => {
         setPeople(prev => [
@@ -458,13 +472,22 @@ const PeopleAssigner: React.FC<PeopleAssignerProps> = ({ items, people, setPeopl
                         </button>
                     </div>
 
-                    <SummaryView items={items} people={people} language={language} />
+                    <div ref={summaryRef}>
+                        <SummaryView items={items} people={people} language={language} />
+                    </div>
                 </div>
                 
                 <div className="lg:col-span-3">
                     {viewMode === 'list' ? renderListView() : renderFocusView()}
                 </div>
             </div>
+
+            <FloatingButtons
+                onCalculatorClick={() => setIsCalculatorOpen(true)}
+                onScrollClick={scrollToSummary}
+                language={language}
+            />
+            {isCalculatorOpen && <Calculator onClose={() => setIsCalculatorOpen(false)} state={calculatorState} setState={setCalculatorState} />}
         </div>
     );
 };

@@ -248,17 +248,6 @@ function App() {
     setDefaultPeople();
   }, [setDefaultPeople]);
 
-  
-  // Cleanup object URL on component unmount
-  useEffect(() => {
-    return () => {
-        if (imageUrls.length > 0) {
-            imageUrls.forEach(url => URL.revokeObjectURL(url));
-        }
-    }
-  }, [imageUrls]);
-
-
   const renderContent = () => {
     switch (appState) {
       case 'loading':
