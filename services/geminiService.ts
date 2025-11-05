@@ -1,6 +1,76 @@
 import { GoogleGenAI, Type } from "@google/genai";
 import type { ReceiptItem } from '../types';
 
+// --- Anti-Spam & Rate Limiting ---
+const MAX_REQUESTS_PER_SESSION = 5;
+const MIN_INTERVAL_MS = 30 * 1000;
+const BAN_DURATION_MS = 5 * 60 * 1000; // 5 minutes
+const STRIKE_LIMIT = 3;
+
+const rateLimitTranslations = {
+    it: {
+        banned: (timeLeft: number) => `Sei stato temporaneamente bloccato per troppe richieste. Riprova tra ${timeLeft} minuti.`,
+        sessionLimit: 'Hai raggiunto il numero massimo di 5 richieste per questa sessione.',
+        spamBan: 'Rilevato spam. Sei stato bloccato per 5 minuti.',
+        tooFast: (timeLeft: number) => `Attendi ${timeLeft} secondi prima di fare un'altra richiesta.`
+    },
+    en: {
+        banned: (timeLeft: number) => `You have been temporarily banned for too many requests. Please try again in ${timeLeft} minutes.`,
+        sessionLimit: 'You have reached the maximum of 5 requests for this session.',
+        spamBan: 'Spam detected. You have been banned for 5 minutes.',
+        tooFast: (timeLeft: number) => `Please wait ${timeLeft} seconds before making another request.`
+    }
+};
+
+const enforceRateLimit = (lang: 'it' | 'en') => {
+    const t = rateLimitTranslations[lang];
+    const now = Date.now();
+
+    const get = (key: string) => parseInt(sessionStorage.getItem(key) || '0', 10);
+    const set = (key: string, value: number) => sessionStorage.setItem(key, value.toString());
+
+    let count = get('splitcheck_request_count');
+    const lastTime = get('splitcheck_last_request_time');
+    let strikes = get('splitcheck_strikes');
+    const bannedUntil = get('splitcheck_banned_until');
+
+    // 1. Check if banned
+    if (bannedUntil > now) {
+        const timeLeft = Math.ceil((bannedUntil - now) / 1000 / 60);
+        throw new Error(t.banned(timeLeft));
+    }
+
+    // 2. Check session request limit
+    if (count >= MAX_REQUESTS_PER_SESSION) {
+        throw new Error(t.sessionLimit);
+    }
+
+    // 3. Check time between requests (ignore for the very first request)
+    if (lastTime !== 0 && now - lastTime < MIN_INTERVAL_MS) {
+        strikes++;
+        set('splitcheck_strikes', strikes);
+
+        // Ban if too many strikes
+        if (strikes >= STRIKE_LIMIT) {
+            const newBannedUntil = now + BAN_DURATION_MS;
+            set('splitcheck_banned_until', newBannedUntil);
+            throw new Error(t.spamBan);
+        }
+        
+        // Warn user to slow down
+        const timeLeft = Math.ceil((MIN_INTERVAL_MS - (now - lastTime)) / 1000);
+        throw new Error(t.tooFast(timeLeft));
+    }
+    
+    // 4. If all checks pass, record the request attempt
+    count++;
+    set('splitcheck_request_count', count);
+    set('splitcheck_last_request_time', now);
+    set('splitcheck_strikes', 0); // Reset strikes on a valid request
+};
+// --- End Anti-Spam & Rate Limiting ---
+
+
 const fileToGenerativePart = async (file: File) => {
   const base64EncodedDataPromise = new Promise<string>((resolve) => {
     const reader = new FileReader();
@@ -26,6 +96,8 @@ const serviceTranslations = {
 };
 
 export const extractItemsFromReceipt = async (imageFile: File, lang: 'it' | 'en'): Promise<ReceiptItem[]> => {
+    enforceRateLimit(lang);
+
     const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
     let response; // Declared here to be available in the catch block for logging.
 

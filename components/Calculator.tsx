@@ -159,30 +159,31 @@ const Calculator: React.FC<CalculatorProps> = ({ onClose, state, setState }) => 
 
                 {/* Buttons */}
                 <div className="grid grid-cols-4 gap-3 pt-4">
-                    <CalculatorButton onClick={clear} className="bg-neutral-500/80 hover:bg-neutral-500/60 text-black">C</CalculatorButton>
-                    <CalculatorButton onClick={() => handleInput('(')} className="bg-neutral-700/80 hover:bg-neutral-700/60">(</CalculatorButton>
-                    <CalculatorButton onClick={() => handleInput(')')} className="bg-neutral-700/80 hover:bg-neutral-700/60">)</CalculatorButton>
-                    <CalculatorButton onClick={() => handleOperator('÷')} className="bg-primary hover:bg-primary/80">÷</CalculatorButton>
+                    {/* FIX: The TypeScript compiler was failing to infer the `children` prop from the component's inner content. The following buttons have been converted to be self-closing and pass `children` as an explicit prop to resolve these errors. */}
+                    <CalculatorButton onClick={clear} className="bg-neutral-500/80 hover:bg-neutral-500/60 text-black" children="C" />
+                    <CalculatorButton onClick={() => handleInput('(')} className="bg-neutral-700/80 hover:bg-neutral-700/60" children="(" />
+                    <CalculatorButton onClick={() => handleInput(')')} className="bg-neutral-700/80 hover:bg-neutral-700/60" children=")" />
+                    <CalculatorButton onClick={() => handleOperator('÷')} className="bg-primary hover:bg-primary/80" children="÷" />
 
-                    <CalculatorButton onClick={() => handleInput('7')} className="bg-neutral-700/80 hover:bg-neutral-700/60">7</CalculatorButton>
-                    <CalculatorButton onClick={() => handleInput('8')} className="bg-neutral-700/80 hover:bg-neutral-700/60">8</CalculatorButton>
-                    <CalculatorButton onClick={() => handleInput('9')} className="bg-neutral-700/80 hover:bg-neutral-700/60">9</CalculatorButton>
-                    <CalculatorButton onClick={() => handleOperator('×')} className="bg-primary hover:bg-primary/80">×</CalculatorButton>
+                    <CalculatorButton onClick={() => handleInput('7')} className="bg-neutral-700/80 hover:bg-neutral-700/60" children="7" />
+                    <CalculatorButton onClick={() => handleInput('8')} className="bg-neutral-700/80 hover:bg-neutral-700/60" children="8" />
+                    <CalculatorButton onClick={() => handleInput('9')} className="bg-neutral-700/80 hover:bg-neutral-700/60" children="9" />
+                    <CalculatorButton onClick={() => handleOperator('×')} className="bg-primary hover:bg-primary/80" children="×" />
                     
-                    <CalculatorButton onClick={() => handleInput('4')} className="bg-neutral-700/80 hover:bg-neutral-700/60">4</CalculatorButton>
-                    <CalculatorButton onClick={() => handleInput('5')} className="bg-neutral-700/80 hover:bg-neutral-700/60">5</CalculatorButton>
-                    <CalculatorButton onClick={() => handleInput('6')} className="bg-neutral-700/80 hover:bg-neutral-700/60">6</CalculatorButton>
-                    <CalculatorButton onClick={() => handleOperator('-')} className="bg-primary hover:bg-primary/80">-</CalculatorButton>
+                    <CalculatorButton onClick={() => handleInput('4')} className="bg-neutral-700/80 hover:bg-neutral-700/60" children="4" />
+                    <CalculatorButton onClick={() => handleInput('5')} className="bg-neutral-700/80 hover:bg-neutral-700/60" children="5" />
+                    <CalculatorButton onClick={() => handleInput('6')} className="bg-neutral-700/80 hover:bg-neutral-700/60" children="6" />
+                    <CalculatorButton onClick={() => handleOperator('-')} className="bg-primary hover:bg-primary/80" children="-" />
                     
-                    <CalculatorButton onClick={() => handleInput('1')} className="bg-neutral-700/80 hover:bg-neutral-700/60">1</CalculatorButton>
-                    <CalculatorButton onClick={() => handleInput('2')} className="bg-neutral-700/80 hover:bg-neutral-700/60">2</CalculatorButton>
-                    <CalculatorButton onClick={() => handleInput('3')} className="bg-neutral-700/80 hover:bg-neutral-700/60">3</CalculatorButton>
-                    <CalculatorButton onClick={() => handleOperator('+')} className="bg-primary hover:bg-primary/80">+</CalculatorButton>
+                    <CalculatorButton onClick={() => handleInput('1')} className="bg-neutral-700/80 hover:bg-neutral-700/60" children="1" />
+                    <CalculatorButton onClick={() => handleInput('2')} className="bg-neutral-700/80 hover:bg-neutral-700/60" children="2" />
+                    <CalculatorButton onClick={() => handleInput('3')} className="bg-neutral-700/80 hover:bg-neutral-700/60" children="3" />
+                    <CalculatorButton onClick={() => handleOperator('+')} className="bg-primary hover:bg-primary/80" children="+" />
                     
-                    <CalculatorButton onClick={del} className="bg-neutral-700/80 hover:bg-neutral-700/60">DEL</CalculatorButton>
-                    <CalculatorButton onClick={() => handleInput('0')} className="bg-neutral-700/80 hover:bg-neutral-700/60">0</CalculatorButton>
-                    <CalculatorButton onClick={() => handleInput('.')} className="bg-neutral-700/80 hover:bg-neutral-700/60">.</CalculatorButton>
-                    <CalculatorButton onClick={evaluate} className="bg-primary hover:bg-primary/80">=</CalculatorButton>
+                    <CalculatorButton onClick={del} className="bg-neutral-700/80 hover:bg-neutral-700/60" children="DEL" />
+                    <CalculatorButton onClick={() => handleInput('0')} className="bg-neutral-700/80 hover:bg-neutral-700/60" children="0" />
+                    <CalculatorButton onClick={() => handleInput('.')} className="bg-neutral-700/80 hover:bg-neutral-700/60" children="." />
+                    <CalculatorButton onClick={evaluate} className="bg-primary hover:bg-primary/80" children="=" />
                 </div>
             </div>
         </div>
