@@ -26,7 +26,7 @@ const serviceTranslations = {
 };
 
 export const extractItemsFromReceipt = async (imageFile: File, lang: 'it' | 'en'): Promise<ReceiptItem[]> => {
-    const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
     let response; // Declared here to be available in the catch block for logging.
 
     try {

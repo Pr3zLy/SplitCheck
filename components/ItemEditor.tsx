@@ -179,7 +179,7 @@ const ItemEditor: React.FC<ItemEditorProps> = ({ items, setItems, onNext, imageU
     ));
 
     return (
-        <div className="animate-fade-in">
+        <div className="animate-fade-in pb-24">
             <div className="text-center mb-8">
                 <h2 className="text-3xl font-bold">{t.title}</h2>
                 <p className="text-muted-foreground mt-2 max-w-2xl mx-auto">
@@ -187,51 +187,9 @@ const ItemEditor: React.FC<ItemEditorProps> = ({ items, setItems, onNext, imageU
                 </p>
             </div>
 
-            <div className="lg:grid lg:grid-cols-3 lg:gap-8">
-                <div className="lg:col-span-2">
-                    <div className="space-y-3">
-                        {/* Header */}
-                        <div className="hidden md:grid grid-cols-12 gap-x-3 items-center px-3 text-sm font-medium text-muted-foreground">
-                            <div className="col-span-5">{t.product}</div>
-                            <div className="col-span-2">{t.quantity}</div>
-                            <div className="col-span-2">{t.unitPrice}</div>
-                            <div className="col-span-2 text-right">{t.total}</div>
-                            <div className="col-span-1"></div>
-                        </div>
-
-                        {items.length > 0 ? itemRows : (
-                            <div className="text-center py-12 border-2 border-dashed border-border rounded-lg">
-                                <p className="text-muted-foreground">{t.noItems}</p>
-                            </div>
-                        )}
-                    </div>
-                     <div className="mt-6 border-t border-border pt-4">
-                        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-                            <div className="flex items-center gap-2">
-                                <button onClick={handleAddItem} disabled={isAppending} className="flex items-center gap-2 px-4 py-2 border border-dashed border-border rounded-md hover:border-primary hover:text-primary text-sm justify-center disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
-                                    <PlusIcon className="w-5 h-5" />
-                                    <span>{t.addItem}</span>
-                                </button>
-                                {isAppending ? (
-                                    <div className="flex items-center justify-center gap-2 px-4 py-2 text-sm text-muted-foreground">
-                                        <div className="w-5 h-5 border-2 border-border border-t-primary rounded-full animate-spin"></div>
-                                        <span>{t.adding}</span>
-                                    </div>
-                                ) : (
-                                    <AppendReceiptUpload onFileUpload={onAppendReceipt} disabled={isAppending} language={language} />
-                                )}
-                            </div>
-                            <div className="text-right">
-                                <div className="text-sm text-muted-foreground">{t.receiptTotal}</div>
-                                <div className="text-2xl font-bold font-mono">€{total.toFixed(2)}</div>
-                            </div>
-                        </div>
-                        {appendError && <p className="mt-2 text-sm text-destructive">{appendError}</p>}
-                    </div>
-                </div>
-
-                <div className="lg:col-span-1 mt-8 lg:mt-0">
-                    <div className="sticky top-24">
+            <div className="lg:grid lg:grid-cols-5 lg:gap-8">
+                <div className="lg:col-span-2 lg:order-last mt-8 lg:mt-0">
+                    <div className="sticky top-28">
                         <h3 className="text-lg font-semibold mb-2">{imageUrls.length > 1 ? t.receipts : t.receipt}</h3>
                         {imageUrls.length > 0 ? (
                             <div 
@@ -255,16 +213,59 @@ const ItemEditor: React.FC<ItemEditorProps> = ({ items, setItems, onNext, imageU
                         )}
                     </div>
                 </div>
+                
+                <div className="lg:col-span-3 lg:order-first">
+                    <div className="space-y-3">
+                        {/* Header */}
+                        <div className="hidden md:grid grid-cols-12 gap-x-3 items-center px-3 text-sm font-medium text-muted-foreground">
+                            <div className="col-span-5">{t.product}</div>
+                            <div className="col-span-2">{t.quantity}</div>
+                            <div className="col-span-2">{t.unitPrice}</div>
+                            <div className="col-span-2 text-right">{t.total}</div>
+                            <div className="col-span-1"></div>
+                        </div>
+
+                        {items.length > 0 ? itemRows : (
+                            <div className="text-center py-12 border-2 border-dashed border-border rounded-lg">
+                                <p className="text-muted-foreground">{t.noItems}</p>
+                            </div>
+                        )}
+                    </div>
+                </div>
             </div>
 
-            <div className="mt-12 text-center">
-                 <button 
-                    onClick={onNext}
-                    disabled={items.length === 0}
-                    className="bg-primary text-primary-foreground hover:bg-primary/90 px-8 py-3 rounded-full font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-lg shadow-lg hover:shadow-primary/30"
-                >
-                    {t.continue}
-                </button>
+            <div className="fixed bottom-0 left-0 right-0 w-full bg-background/80 backdrop-blur-sm border-t border-border z-40">
+                <div className="container mx-auto p-4 w-full max-w-7xl flex flex-col sm:flex-row items-center justify-between gap-4">
+                     <div className="flex items-center gap-2">
+                        <button onClick={handleAddItem} disabled={isAppending} className="flex items-center gap-2 px-4 py-2 border border-dashed border-border rounded-md hover:border-primary hover:text-primary text-sm justify-center disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
+                            <PlusIcon className="w-5 h-5" />
+                            <span>{t.addItem}</span>
+                        </button>
+                        {isAppending ? (
+                            <div className="flex items-center justify-center gap-2 px-4 py-2 text-sm text-muted-foreground">
+                                <div className="w-5 h-5 border-2 border-border border-t-primary rounded-full animate-spin"></div>
+                                <span>{t.adding}</span>
+                            </div>
+                        ) : (
+                            <AppendReceiptUpload onFileUpload={onAppendReceipt} disabled={isAppending} language={language} />
+                        )}
+                        {appendError && <p className="ml-4 text-sm text-destructive">{appendError}</p>}
+                    </div>
+
+                    <div className="flex items-center gap-6">
+                        <div className="text-right">
+                            <div className="text-sm text-muted-foreground">{t.receiptTotal}</div>
+                            <div className="text-2xl font-bold font-mono">€{total.toFixed(2)}</div>
+                        </div>
+                        <button 
+                            onClick={onNext}
+                            disabled={items.length === 0}
+                            className="bg-primary text-primary-foreground hover:bg-primary/90 px-8 py-3 rounded-full font-semibold transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-lg shadow-lg hover:shadow-primary/30"
+                        >
+                            {t.continue}
+                        </button>
+                    </div>
+                </div>
             </div>
             
             {selectedImageUrl && (
